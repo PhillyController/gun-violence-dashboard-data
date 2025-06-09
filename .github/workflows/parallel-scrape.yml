@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: master
+          ref: ${{ github.ref }}
           persist-credentials: false
           fetch-depth: 0
       - uses: actions/setup-python@v2
@@ -46,7 +46,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
-          branch: master
+          branch: ${{ github.ref_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   combine-files:
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: master
+          ref: ${{ github.ref }}
           persist-credentials: false
           fetch-depth: 0
       - uses: actions/setup-python@v2
@@ -82,4 +82,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
+          branch: ${{ github.ref_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
