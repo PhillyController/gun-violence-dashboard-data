@@ -205,8 +205,10 @@ class ShootingVictimsSchema(BaseModel):
             "'W' = White, Non-Hispanic, 'A' = Asian, and 'Other/Unknown'"
         ),
     )
-    sex: Literal["M", "F"] = Field(
-        title="Sex", description="The sex of the shooting victim."
+    sex: Optional[str] = Field(
+        None,
+        title="Sex",
+        description="The sex of the shooting victim (M or F)."
     )
     fatal: Literal[True, False] = Field(
         title="Fatal?", description="Whether the incident was fatal."
@@ -294,6 +296,12 @@ class ShootingVictimsSchema(BaseModel):
         else:
             assert not v.endswith(".0"), "bad string formatting"
         return v
+    
+    @validator("sex")
+    def validate_sex(cls, v):
+        if v not in ["M", "F", None]:
+            raise ValueError('sex must be either "M" or "F" if present')
+        return v
 
 
 @dataclass
@@ -334,6 +342,7 @@ class ShootingVictimsData:
                 year=lambda df: df.date.dt.year,
                 race=lambda df: df.race.fillna("Other/Unknown"),
                 age=lambda df: df.age.astype(float),
+                sex=lambda df: df.sex.where(df.sex.isin(["M", "F"]), None).replace({np.nan: None}),
                 age_group=lambda df: np.select(
                     [
                         df.age <= 17,
