@@ -435,4 +435,4 @@ class ShootingVictimsData:
             )
 
             # Save to s3
-            upload_to_s3(data_yr, f"shootings_{year}.json")
+            # upload_to_s3(data_yr, f"shootings_{year}.json")
