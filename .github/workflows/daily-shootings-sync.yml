@@ -1,11 +1,14 @@
 name: Daily Shootings Data Sync
 
 on:
-  schedule:
-    - cron: "30 11 * * 1-5"
-    - cron: "30 15 * * 1-5"
-    - cron: "30 17 * * 1-5"
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "30 11 * * 1-5"
+  #   - cron: "30 15 * * 1-5"
+  #   - cron: "30 17 * * 1-5"
   push:
+    branches:
+      - 'feature/**'
     paths:
       - .github/workflows/daily-shootings-sync.yml
 

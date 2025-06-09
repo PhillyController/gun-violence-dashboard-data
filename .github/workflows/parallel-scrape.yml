@@ -1,9 +1,12 @@
 name: Parallel Courts Scraper
 
 on:
-  schedule:
-    - cron: "15 2 * * 0"
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "15 2 * * 0"
   push:
+    branches:
+      - 'feature/**'
     paths:
       - .github/workflows/parallel-scrape.yml
 
