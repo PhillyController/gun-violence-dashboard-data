@@ -49,12 +49,12 @@ class PPDHomicideTotal:
 
     Source
     ------
-    https://www.phillypolice.com/crime-maps-stats/
+    https://www.phillypolice.com/crime-data/crime-statistics/
     """
 
     debug: bool = False
 
-    URL = "https://www.phillypolice.com/crime-maps-stats/"
+    URL = "https://www.phillypolice.com/crime-data/crime-statistics/"
 
     def __post_init__(self):
         # Get the driver
@@ -64,17 +64,29 @@ class PPDHomicideTotal:
         driver.get(self.URL)
 
         # Wait for the tables to load
-        delay = 5  # seconds
+        delay = 10  # seconds
         try:
             WebDriverWait(driver, delay).until(
-                EC.presence_of_element_located((By.ID, "stats-content"))
+                EC.presence_of_element_located((By.ID, "homicide_numbers"))
             )
 
             # Get the page source
             self.soup = BeautifulSoup(driver.page_source, "html.parser")
 
-            # Get the two tables on the page
-            self.tables = self.soup.select("table")
+            # Parse new-style homicide blocks and store on self.blocks
+            self.blocks = []
+            for container in self.soup.select("div.homicides-counting-data"):
+                items = []
+                for hb in container.select(".homicide-data-block"):
+                    y_node = hb.select_one(".data-heading")
+                    v_node = hb.select_one(".counted-data")
+                    if not y_node or not v_node:
+                        continue
+                    y = int(y_node.get_text(strip=True))
+                    v = int(v_node.get_text(strip=True).replace(",", ""))
+                    items.append((y, v))
+                if items:
+                    self.blocks.append(items)
 
         except TimeoutException:
             raise ValueError("Page took too long to load")
@@ -83,83 +95,36 @@ class PPDHomicideTotal:
     def years(self):
         """The years available on the page. Starts with 2007."""
 
-        # Get the years from both tables and take the unique ones
-        years = []
-        for table in self.tables:
-            years += [
-                int(th.text)
-                for th in table.select_one("thead").select("th")
-                if th.text.startswith("2")
-            ]
-
-        return list(sorted(set(years), reverse=True))
+        # Use the first homicide block's years (data-heading)
+        years = [y for (y, _) in self.blocks[0]]
+        return sorted(years, reverse=True)
 
     @cached_property
     def as_of_date(self):
         """The current "as of" date on the page."""
 
-        # This will be in the form of "Month name Day"
-        date = self.tables[0].select_one("tbody").select_one("tr").select_one("th").text
-
-        # Return a datetime object
-        return pd.to_datetime(f"{date} {self.years[0]}" + " 11:59:00")
+        # Use today's date at 11:59:00 as the "as of" timestamp
+        return pd.to_datetime(f"{date.today().isoformat()} 11:59:00")
 
     @cached_property
     def annual_totals(self):
         """The annual totals for homicides in Philadelphia."""
 
-        # This is for historic data only (doesn't include current year)
-        annual_totals = [
-            int(td.text)
-            for td in self.tables[1].select_one("tbody").select("td")
-            if td.text
-        ]
-
-        if len(annual_totals) != len(self.years[1:]):
-            raise ValueError(
-                "Length mismatch between parsed years and annual homicide totals"
-            )
-
-        return pd.DataFrame(
-            {"year": self.years[1:], "annual": annual_totals}
-        ).sort_values("year", ascending=False)
+        # Use the second homicide block (full-year totals)
+        items = self.blocks[1]
+        years = [y for (y, _) in items]
+        vals = [v for (_, v) in items]
+        return pd.DataFrame({"year": years, "annual": vals}).sort_values("year", ascending=False)
 
     @cached_property
     def ytd_totals(self):
         """The year-to-date totals for homicides in Philadelphia."""
 
-        # Years
-        years = [
-            int(th.text)
-            for th in self.tables[0].select_one("thead").select("th")
-            if th.text.startswith("2")
-        ]
-
-        # Get YTD total for current year
-        API = "https://phillypolice.com/api/stats/homicides"
-        ytd_homicides_this_year = requests.get(API).json()["total"]
-
-        # Get the YTD totals
-        ytd_totals = [ytd_homicides_this_year]
-
-        # Get the tds
-        tds = self.tables[0].select_one("tbody").select("td")
-
-        # Get the last number of years
-        nyears_minus_one = len(years) - 1
-        tds = tds[-nyears_minus_one:]
-
-        # Get the years
-        for td in tds:
-            value = td.text
-            if value:
-                ytd_totals.append(int(value))
-
-        if len(ytd_totals) != len(years):
-            raise ValueError("Length mismatch between parsed years and YTD homicides")
-
-        # Return ytd totals, sorted in ascending order
-        out = pd.DataFrame({"year": years, "ytd": ytd_totals})
+        # Use the first homicide block (year-to-date)
+        items = self.blocks[0]
+        years = [y for (y, _) in items]
+        vals = [v for (_, v) in items]
+        out = pd.DataFrame({"year": years, "ytd": vals})
         return out.sort_values("year", ascending=False)
 
     @property
@@ -177,11 +142,8 @@ class PPDHomicideTotal:
         return df.sort_values("date", ascending=True)
 
     def _get_years_from_year_end_section(self):
-        return [
-            int(th.text)
-            for th in self.tables[1].select_one("thead").select("th")
-            if th.text.startswith("2")
-        ]
+        # Return years found in the second (year-end) block
+        return [y for (y, _) in self.blocks[1]]
 
     def update(self, force=False):
         """Update the local data via scraping the PPD website."""
