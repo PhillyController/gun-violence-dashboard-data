@@ -5,3 +5,4 @@ notebooks/
 build/
 .vscode
 .env
+__pycache__
