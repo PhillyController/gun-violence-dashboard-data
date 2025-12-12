@@ -40,6 +40,10 @@ class CourtInfoByIncident:
 
         # Load raw courts data and existing dc keys
         courts = self.get()
+
+        # Clean dc_numbers by removing dashes (fixes malformed entries)
+        courts["dc_number"] = courts["dc_number"].astype(str).str.replace("-", "", regex=False)
+
         existing_dc_keys = ("20" + courts["dc_number"]).unique()
 
         if self.debug:
