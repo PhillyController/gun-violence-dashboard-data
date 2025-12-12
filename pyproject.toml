@@ -6,7 +6,7 @@ authors = ["Nick Hand <nick.hand@phila.gov>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 geopandas = "*"
 carto2gpd = "*"
 loguru = "*"
@@ -27,7 +27,7 @@ lxml = "^4.9.1"
 urllib3 = "<2"
 pydantic = "^1.10.2"
 selenium = ">4"
-numpy = "<2.0"
+numpy = "^1.26.4"
 marshmallow = "<3.13"
 
 
