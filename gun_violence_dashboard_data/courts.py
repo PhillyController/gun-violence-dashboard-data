@@ -23,7 +23,7 @@ class CourtInfoByIncident:
     def __post_init__(self):
 
         # Initialize the scraper
-        self.scraper = UJSPortalScraper(sleep=self.sleep, debug=self.debug)
+        self.scraper = UJSPortalScraper(sleep=self.sleep)
 
     @property
     def path(self):
