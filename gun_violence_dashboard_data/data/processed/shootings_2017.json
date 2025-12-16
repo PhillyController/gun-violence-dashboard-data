@@ -1,5 +1,6 @@
 {
 "type": "FeatureCollection",
+"name": "shootings_2017",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "dc_key": "201715123034", "race": "B", "sex": "M", "fatal": true, "date": "2017/12/31 12:54:00", "age_group": "18 to 30", "has_court_case": true, "age": 27.0, "street_name": "LEONARD ST", "block_number": 5700.0, "zip_code": "19149", "council_district": "7", "police_district": "15", "neighborhood": "Mayfair-Holmesburg", "school_name": "William H. Ziegler School", "house_district": "202", "senate_district": "2", "segment_id": "9039" }, "geometry": { "type": "Point", "coordinates": [ -75.074393, 40.027547 ] } },

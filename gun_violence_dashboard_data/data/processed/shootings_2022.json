@@ -1,5 +1,6 @@
 {
 "type": "FeatureCollection",
+"name": "shootings_2022",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "dc_key": "202225073062", "race": "B", "sex": "F", "fatal": false, "date": "2022/12/31 00:13:00", "age_group": "Older than 45", "has_court_case": false, "age": 64.0, "street_name": "N 5TH ST", "block_number": 2900.0, "zip_code": "19133", "council_district": "7", "police_district": "25", "neighborhood": "Hunting Park-Fairhill", "school_name": "Potter-Thomas School", "house_district": "197", "senate_district": "2", "segment_id": "12273" }, "geometry": { "type": "Point", "coordinates": [ -75.13956, 39.995303 ] } },

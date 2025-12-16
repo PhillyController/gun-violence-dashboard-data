@@ -1,5 +1,6 @@
 {
 "type": "FeatureCollection",
+"name": "shootings_2025",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "dc_key": "202501033953", "race": "B", "sex": "M", "fatal": false, "date": "2025/12/15 15:00:00", "age_group": "18 to 30", "has_court_case": false, "age": 19.0, "street_name": "OREGON AVE", "block_number": 2300.0, "zip_code": "19145", "council_district": "2", "police_district": "1", "neighborhood": "Grays Ferry-Passyunk", "school_name": "Stephen Girard School", "house_district": "185", "senate_district": "1", "segment_id": "14696" }, "geometry": { "type": "Point", "coordinates": [ -75.186395, 39.919555 ] } },
