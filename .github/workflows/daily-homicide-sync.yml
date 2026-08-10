@@ -2,8 +2,8 @@ name: Daily Homicide Data Sync
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 15 * * 1-5"
-    - cron: "15 17 * * 1-5"
+    - cron: "20 15 * * 1-5"
+    - cron: "20 17 * * 1-5"
   push:
     branches:
       - 'master'
