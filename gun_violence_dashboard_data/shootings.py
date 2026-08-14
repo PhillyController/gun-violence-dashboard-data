@@ -76,6 +76,11 @@ def upload_to_s3(data, filename):
         )
 
 
+def parse_flag(column):
+    """Parse a 0/1 flag column into booleans."""
+    return (pd.to_numeric(column, errors="coerce") == 1).to_numpy(dtype=bool)
+
+
 def carto2gpd_post(url, table_name, where=None, fields=None):
     """Query carto API with a post call"""
 
@@ -353,10 +358,10 @@ class ShootingVictimsData:
                     ["Younger than 18", "18 to 30", "31 to 45", "Older than 45"],
                     default="Unknown",
                 ),
-                fatal=lambda df: df.fatal.apply(lambda x: True if x == 1 else False),
+                fatal=lambda df: parse_flag(df.fatal),
             )
             .assign(
-                race=lambda df: df.race.where(df.latino != 1, other="H"),
+                race=lambda df: df.race.where(~parse_flag(df.latino), other="H"),
             )
             .drop(labels=["point_x", "point_y", "date_", "time", "objectid"], axis=1)
             .sort_values("date", ascending=False)
