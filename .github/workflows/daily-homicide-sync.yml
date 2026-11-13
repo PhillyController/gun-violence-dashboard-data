@@ -15,14 +15,14 @@ jobs:
     name: Daily Homicides Data Sync
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref }}
           persist-credentials: false
           fetch-depth: 0
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.9"
+          python-version: "3.11"
       - name: Run image
         uses: abatilo/actions-poetry@v2.0.0
         with:
